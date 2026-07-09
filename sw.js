@@ -1,6 +1,5 @@
-const CACHE = 'didadoit-v2';
+const CACHE = 'didadoit-v3';
 const ASSETS = [
-  './',
   './index.html',
   './logo.svg',
   './icon.svg',
@@ -10,10 +9,12 @@ const ASSETS = [
   './manifest.json'
 ];
 
-// Install: cache all assets
+// Install: cache assets individually so one failure doesn't abort everything
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS))
+    caches.open(CACHE).then(cache =>
+      Promise.allSettled(ASSETS.map(url => cache.add(url)))
+    )
   );
   self.skipWaiting();
 });
