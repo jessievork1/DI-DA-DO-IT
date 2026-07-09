@@ -1,0 +1,85 @@
+<svg viewBox="0 0 280 250" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow-di" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-da" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-do" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-spark" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ── Main letters ── -->
+
+  <!-- DI - cyan -->
+  <text x="12" y="86"
+        font-family="-apple-system,'Segoe UI',system-ui,sans-serif"
+        font-size="88" font-weight="900" letter-spacing="-2"
+        fill="#00d4ff" filter="url(#glow-di)">DI</text>
+
+  <!-- DA - orange -->
+  <text x="50" y="165"
+        font-family="-apple-system,'Segoe UI',system-ui,sans-serif"
+        font-size="88" font-weight="900" letter-spacing="-2"
+        fill="#ff9500" filter="url(#glow-da)">DA</text>
+
+  <!-- DO - purple -->
+  <text x="12" y="238"
+        font-family="-apple-system,'Segoe UI',system-ui,sans-serif"
+        font-size="84" font-weight="900" letter-spacing="-2"
+        fill="#bf5fff" filter="url(#glow-do)">DO</text>
+
+  <!-- IT - white, smaller, sits right of DO on same baseline -->
+  <text x="152" y="232"
+        font-family="-apple-system,'Segoe UI',system-ui,sans-serif"
+        font-size="46" font-weight="900" letter-spacing="1"
+        fill="rgba(255,255,255,0.75)">IT</text>
+
+  <!-- ── Sparkles ── -->
+  <g filter="url(#glow-spark)">
+
+    <!-- Top-right cluster -->
+    <g transform="translate(248,26)">
+      <line x1="0" y1="-9" x2="0" y2="9"   stroke="#00d4ff" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="-9" y1="0" x2="9" y2="0"   stroke="#00d4ff" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="-6" y1="-6" x2="6" y2="6"  stroke="#00d4ff" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="6" y1="-6" x2="-6" y2="6"  stroke="#00d4ff" stroke-width="1.2" stroke-linecap="round"/>
+    </g>
+    <circle cx="236" cy="18" r="2.2" fill="#00d4ff" opacity="0.9"/>
+    <circle cx="262" cy="48" r="1.6" fill="#00d4ff" opacity="0.6"/>
+
+    <!-- Orange sparkle mid-right -->
+    <g transform="translate(268,95)">
+      <line x1="0" y1="-7" x2="0" y2="7"   stroke="#ff9500" stroke-width="2" stroke-linecap="round"/>
+      <line x1="-7" y1="0" x2="7" y2="0"   stroke="#ff9500" stroke-width="2" stroke-linecap="round"/>
+      <line x1="-4.5" y1="-4.5" x2="4.5" y2="4.5" stroke="#ff9500" stroke-width="1.1" stroke-linecap="round"/>
+      <line x1="4.5" y1="-4.5" x2="-4.5" y2="4.5" stroke="#ff9500" stroke-width="1.1" stroke-linecap="round"/>
+    </g>
+    <circle cx="258" cy="72" r="2"   fill="#ff9500" opacity="0.8"/>
+    <circle cx="272" cy="118" r="1.5" fill="#ff9500" opacity="0.5"/>
+
+    <!-- Purple sparkle lower-right -->
+    <g transform="translate(255,165)">
+      <line x1="0" y1="-6" x2="0" y2="6"   stroke="#bf5fff" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="-6" y1="0" x2="6" y2="0"   stroke="#bf5fff" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="-4" y1="-4" x2="4" y2="4"  stroke="#bf5fff" stroke-width="1"   stroke-linecap="round"/>
+      <line x1="4" y1="-4" x2="-4" y2="4"  stroke="#bf5fff" stroke-width="1"   stroke-linecap="round"/>
+    </g>
+    <circle cx="268" cy="148" r="1.8" fill="#bf5fff" opacity="0.7"/>
+    <circle cx="244" cy="180" r="1.4" fill="#bf5fff" opacity="0.5"/>
+
+    <!-- Small dots scattered -->
+    <circle cx="228" cy="108" r="1.5" fill="#00d4ff" opacity="0.4"/>
+    <circle cx="242" cy="140" r="1.2" fill="#ff9500" opacity="0.4"/>
+
+  </g>
+</svg>

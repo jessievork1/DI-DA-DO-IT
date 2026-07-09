@@ -77,6 +77,16 @@
     .screen { width: 100%; display: flex; flex-direction: column; align-items: center; }
     .screen.hidden { display: none; }
 
+    /* ── Logo sparkle twinkle ── */
+    .logo-spark   { animation: twinkleSpark 2s   ease-in-out infinite alternate; }
+    .logo-spark-2 { animation: twinkleSpark 1.6s ease-in-out infinite alternate; animation-delay: -0.6s; }
+    .logo-spark-3 { animation: twinkleSpark 2.3s ease-in-out infinite alternate; animation-delay: -1.2s; }
+
+    @keyframes twinkleSpark {
+      from { opacity: 0.3; }
+      to   { opacity: 1;   }
+    }
+
     /* ── Logo ── */
     .logo {
       font-size: 2.6rem;
@@ -218,14 +228,11 @@
     .game-topbar {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       width: 100%;
-      position: relative;
       margin-bottom: 16px;
     }
     .btn-home {
-      position: absolute;
-      left: 0;
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.12);
       color: rgba(255,255,255,0.5);
@@ -631,8 +638,74 @@
 
     <!-- ── HOME SCREEN ── -->
     <div class="screen" id="home-screen">
-      <div class="logo" style="margin-top:32px">Di · Da · Do</div>
-      <div class="logo-sub">The humming game</div>
+      <svg viewBox="0 0 280 250" xmlns="http://www.w3.org/2000/svg"
+           style="width:210px;height:auto;margin-top:28px;overflow:visible;filter:drop-shadow(0 0 18px rgba(100,60,255,0.25))">
+        <defs>
+          <!-- Sweeping shimmer gradient — same vibe as the original text logo -->
+          <linearGradient id="shimmer-grad" gradientUnits="userSpaceOnUse"
+                          x1="0" y1="0" x2="280" y2="0" spreadMethod="repeat">
+            <stop offset="0%"   stop-color="#00d4ff"/>
+            <stop offset="33%"  stop-color="#ff9500"/>
+            <stop offset="66%"  stop-color="#bf5fff"/>
+            <stop offset="100%" stop-color="#00d4ff"/>
+            <animateTransform attributeName="gradientTransform" type="translate"
+                              from="0 0" to="-280 0" dur="4s"
+                              repeatCount="indefinite" calcMode="linear"/>
+          </linearGradient>
+        </defs>
+
+        <!-- DI -->
+        <text x="12" y="86"
+              font-family="-apple-system,'Segoe UI',system-ui,sans-serif"
+              font-size="88" font-weight="900" letter-spacing="-2"
+              fill="url(#shimmer-grad)">DI</text>
+
+        <!-- DA -->
+        <text x="50" y="165"
+              font-family="-apple-system,'Segoe UI',system-ui,sans-serif"
+              font-size="88" font-weight="900" letter-spacing="-2"
+              fill="url(#shimmer-grad)">DA</text>
+
+        <!-- DO -->
+        <text x="12" y="238"
+              font-family="-apple-system,'Segoe UI',system-ui,sans-serif"
+              font-size="84" font-weight="900" letter-spacing="-2"
+              fill="url(#shimmer-grad)">DO</text>
+
+        <!-- IT - white -->
+        <text x="152" y="232"
+              font-family="-apple-system,'Segoe UI',system-ui,sans-serif"
+              font-size="46" font-weight="900" letter-spacing="1"
+              fill="rgba(255,255,255,0.75)">IT</text>
+
+        <!-- Sparkles -->
+        <g class="logo-spark">
+          <line x1="248" y1="17" x2="248" y2="35" stroke="#00d4ff" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="239" y1="26" x2="257" y2="26" stroke="#00d4ff" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="242" y1="20" x2="254" y2="32" stroke="#00d4ff" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="254" y1="20" x2="242" y2="32" stroke="#00d4ff" stroke-width="1.2" stroke-linecap="round"/>
+          <circle cx="236" cy="18" r="2.2" fill="#00d4ff"/>
+          <circle cx="262" cy="48" r="1.6" fill="#00d4ff"/>
+        </g>
+        <g class="logo-spark logo-spark-2">
+          <line x1="268" y1="88" x2="268" y2="102" stroke="#ff9500" stroke-width="2" stroke-linecap="round"/>
+          <line x1="261" y1="95" x2="275" y2="95" stroke="#ff9500" stroke-width="2" stroke-linecap="round"/>
+          <line x1="263" y1="90" x2="273" y2="100" stroke="#ff9500" stroke-width="1.1" stroke-linecap="round"/>
+          <line x1="273" y1="90" x2="263" y2="100" stroke="#ff9500" stroke-width="1.1" stroke-linecap="round"/>
+          <circle cx="258" cy="72" r="2" fill="#ff9500"/>
+          <circle cx="272" cy="118" r="1.5" fill="#ff9500"/>
+        </g>
+        <g class="logo-spark logo-spark-3">
+          <line x1="255" y1="158" x2="255" y2="172" stroke="#bf5fff" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="248" y1="165" x2="262" y2="165" stroke="#bf5fff" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="250" y1="160" x2="260" y2="170" stroke="#bf5fff" stroke-width="1" stroke-linecap="round"/>
+          <line x1="260" y1="160" x2="250" y2="170" stroke="#bf5fff" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="268" cy="148" r="1.8" fill="#bf5fff"/>
+          <circle cx="244" cy="180" r="1.4" fill="#bf5fff"/>
+        </g>
+
+      </svg>
+      <div class="logo-sub" style="margin-top:10px">The humming game</div>
 
       <div class="home-section">
         <div class="home-label">Select team</div>
@@ -661,6 +734,7 @@
 
       <div class="game-topbar" style="margin-top:16px">
         <button class="btn-home" onclick="goHome()">← Home</button>
+        <img src="logo.svg" alt="Di Da Do It" style="height:36px;width:auto;opacity:0.85"/>
         <div class="team-badge" id="team-badge">Team 1</div>
       </div>
 
