@@ -1,4 +1,4 @@
-const CACHE = 'didadoit-v6';
+const CACHE = 'didadoit-v7';
 const ASSETS = [
   './index.html',
   './logo.svg',
@@ -6,7 +6,8 @@ const ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './apple-touch-icon.png',
-  './manifest.json'
+  './manifest.json',
+  './image.png'
 ];
 
 // Install: cache assets individually so one failure doesn't abort everything
