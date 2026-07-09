@@ -61,7 +61,7 @@
       z-index: 999;
     }
 
-    /* ── Layout ── */
+    /* ── Screens ── */
     .app {
       position: relative;
       z-index: 1;
@@ -71,9 +71,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 20px 36px;
-      gap: 0;
+      padding: 24px 20px 40px;
     }
+
+    .screen { width: 100%; display: flex; flex-direction: column; align-items: center; }
+    .screen.hidden { display: none; }
 
     /* ── Logo ── */
     .logo {
@@ -87,7 +89,6 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: shimmer 4s linear infinite;
-      margin-bottom: 6px;
       line-height: 1.1;
       text-align: center;
     }
@@ -96,12 +97,27 @@
       letter-spacing: 4px;
       color: rgba(255,255,255,0.3);
       text-transform: uppercase;
-      margin-bottom: 22px;
+      margin-top: 6px;
     }
 
     @keyframes shimmer {
       0%   { background-position: 0%; }
       100% { background-position: 300%; }
+    }
+
+    /* ── Home screen ── */
+    .home-section {
+      width: 100%;
+      margin-top: 36px;
+    }
+    .home-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 12px;
+      text-align: center;
     }
 
     /* ── Team selector ── */
@@ -112,11 +128,13 @@
       border-radius: 50px;
       padding: 4px;
       gap: 4px;
-      margin-bottom: 22px;
+      width: 100%;
+      justify-content: center;
     }
     .team-btn {
-      padding: 10px 32px;
-      font-size: 0.95rem;
+      flex: 1;
+      padding: 11px 12px;
+      font-size: 0.9rem;
       font-weight: 700;
       border: none;
       border-radius: 46px;
@@ -135,7 +153,96 @@
       background: linear-gradient(135deg, #1a6b4a, #00c87a);
       box-shadow: 0 4px 20px rgba(0,200,122,0.4);
     }
-    .team-btn:disabled { cursor: default; }
+
+    /* ── Duration selector ── */
+    .dur-selector {
+      display: flex;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50px;
+      padding: 4px;
+      gap: 4px;
+      width: 100%;
+    }
+    .dur-btn {
+      flex: 1;
+      padding: 11px 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 46px;
+      cursor: pointer;
+      background: transparent;
+      color: rgba(255,255,255,0.45);
+      transition: all 0.25s;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .dur-btn.active {
+      background: linear-gradient(135deg, #0a4a6b, #00a8cc);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(0,168,204,0.45);
+    }
+
+    /* ── Buttons ── */
+    .btn-start {
+      width: 100%;
+      padding: 20px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #7b2fff, #bf5fff);
+      color: #fff;
+      box-shadow: 0 10px 40px rgba(123,47,255,0.5);
+      transition: transform 0.12s, opacity 0.2s;
+      position: relative;
+      overflow: hidden;
+      margin-top: 36px;
+    }
+    .btn-start::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.1);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .btn-start:hover::after { opacity: 1; }
+    .btn-start:active { transform: scale(0.97); }
+
+    /* ── Game screen top bar ── */
+    .game-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .btn-home {
+      position: absolute;
+      left: 0;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.5);
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-home:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .team-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
 
     /* ── Circular Timer ── */
     .timer-wrap {
@@ -233,7 +340,6 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-      transition: transform 0.15s;
       position: relative;
       overflow: hidden;
     }
@@ -244,23 +350,15 @@
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
     }
-
-    /* Card slide animation */
-    .card.slide-out {
-      animation: slideOut 0.2s ease-in forwards;
-    }
-    .card.slide-in {
-      animation: slideIn 0.25s ease-out forwards;
-    }
+    .card.slide-out { animation: slideOut 0.2s ease-in forwards; }
+    .card.slide-in  { animation: slideIn  0.25s ease-out forwards; }
     @keyframes slideOut {
       to { transform: translateX(-60px); opacity: 0; }
     }
     @keyframes slideIn {
       from { transform: translateX(60px); opacity: 0; }
-      to   { transform: translateX(0);   opacity: 1; }
+      to   { transform: translateX(0);    opacity: 1; }
     }
-
-    /* Flash overlays */
     .card.flash-correct { animation: flashGreen 0.35s ease-out; }
     .card.flash-pass    { animation: flashRed   0.35s ease-out; }
     @keyframes flashGreen {
@@ -297,30 +395,16 @@
       background: rgba(255,255,255,0.15);
       border-radius: 2px;
     }
-
-    .song-title {
-      font-size: 1.55rem;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.25;
-    }
-    .song-artist {
-      font-size: 1rem;
-      color: rgba(255,255,255,0.5);
-      font-weight: 500;
-    }
-    .card-placeholder {
-      color: rgba(255,255,255,0.25);
-      font-size: 1rem;
-      letter-spacing: 1px;
-    }
+    .song-title  { font-size: 1.55rem; font-weight: 800; color: #fff; line-height: 1.25; }
+    .song-artist { font-size: 1rem; color: rgba(255,255,255,0.5); font-weight: 500; }
+    .card-placeholder { color: rgba(255,255,255,0.25); font-size: 1rem; letter-spacing: 1px; }
 
     /* ── Action buttons ── */
     .action-buttons {
       display: flex;
       gap: 14px;
       width: 100%;
-      margin-bottom: 16px;
+      margin-bottom: 0;
     }
     .btn-action {
       flex: 1;
@@ -359,35 +443,6 @@
       box-shadow: 0 8px 30px rgba(255,59,92,0.35);
     }
 
-    /* ── Start button ── */
-    .btn-start {
-      width: 100%;
-      padding: 20px;
-      font-size: 1.15rem;
-      font-weight: 800;
-      border: none;
-      border-radius: 18px;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      background: linear-gradient(135deg, #7b2fff, #bf5fff);
-      color: #fff;
-      box-shadow: 0 10px 40px rgba(123,47,255,0.5);
-      transition: transform 0.12s, box-shadow 0.2s, opacity 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-    .btn-start::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,0.1);
-      opacity: 0;
-      transition: opacity 0.15s;
-    }
-    .btn-start:hover::after { opacity: 1; }
-    .btn-start:active { transform: scale(0.97); }
-
     /* ── Progress ── */
     .progress-bar-wrap {
       width: 100%;
@@ -411,10 +466,10 @@
       letter-spacing: 1px;
     }
 
-    /* ── Done / End screen ── */
-    .done-icon { font-size: 3.5rem; margin-bottom: 4px; }
+    /* ── Done card ── */
+    .done-icon  { font-size: 3.5rem; margin-bottom: 4px; }
     .done-title { font-size: 1.6rem; font-weight: 900; color: #fff; }
-    .done-sub { font-size: 0.95rem; color: rgba(255,255,255,0.45); margin-top: 4px; }
+    .done-sub   { font-size: 0.95rem; color: rgba(255,255,255,0.45); margin-top: 4px; }
 
     /* ── Summary overlay ── */
     #summary-overlay {
@@ -444,7 +499,6 @@
       padding: 48px 24px 20px;
       text-align: center;
       flex-shrink: 0;
-      position: relative;
     }
     .summary-header::after {
       content: '';
@@ -455,14 +509,9 @@
       border-radius: 3px;
       margin: 16px auto 0;
     }
-    .summary-icon { font-size: 3rem; line-height: 1; margin-bottom: 8px; }
+    .summary-icon  { font-size: 3rem; line-height: 1; margin-bottom: 8px; }
     .summary-title { font-size: 1.8rem; font-weight: 900; color: #fff; }
-    .summary-pills {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 12px;
-    }
+    .summary-pills { display: flex; gap: 10px; justify-content: center; margin-top: 12px; }
 
     .summary-list {
       width: 100%;
@@ -487,14 +536,8 @@
       opacity: 0;
       animation: rowIn 0.35s ease-out forwards;
     }
-    .summary-row.correct-row {
-      background: rgba(0,200,122,0.07);
-      border-color: rgba(0,200,122,0.2);
-    }
-    .summary-row.pass-row {
-      background: rgba(255,59,92,0.07);
-      border-color: rgba(255,59,92,0.15);
-    }
+    .summary-row.correct-row { background: rgba(0,200,122,0.07);  border-color: rgba(0,200,122,0.2); }
+    .summary-row.pass-row    { background: rgba(255,59,92,0.07);  border-color: rgba(255,59,92,0.15); }
     @keyframes rowIn {
       from { opacity: 0; transform: translateX(20px); }
       to   { opacity: 1; transform: translateX(0); }
@@ -508,15 +551,15 @@
       letter-spacing: 1px;
       flex-shrink: 0;
     }
-    .summary-badge.DI { background: rgba(0,212,255,0.15); color: var(--di); }
-    .summary-badge.DA { background: rgba(255,149,0,0.15);  color: var(--da); }
-    .summary-badge.DO { background: rgba(191,95,255,0.15); color: var(--do); }
+    .summary-badge.DI { background: rgba(0,212,255,0.15);  color: var(--di); }
+    .summary-badge.DA { background: rgba(255,149,0,0.15);   color: var(--da); }
+    .summary-badge.DO { background: rgba(191,95,255,0.15);  color: var(--do); }
 
-    .summary-info { flex: 1; min-width: 0; text-align: left; }
+    .summary-info   { flex: 1; min-width: 0; text-align: left; }
     .summary-song   { font-size: 0.95rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .summary-artist { font-size: 0.78rem; color: rgba(255,255,255,0.38); margin-top: 1px; }
 
-    .summary-result { font-size: 1.1rem; flex-shrink: 0; }
+    .summary-result         { font-size: 1.1rem; flex-shrink: 0; }
     .summary-result.correct { color: var(--correct); }
     .summary-result.pass    { color: var(--pass); }
 
@@ -558,14 +601,12 @@
 </head>
 <body>
 
-  <!-- Background -->
   <div class="bg">
     <div class="orb orb1"></div>
     <div class="orb orb2"></div>
     <div class="orb orb3"></div>
   </div>
 
-  <!-- Confetti canvas -->
   <canvas id="confetti-canvas"></canvas>
 
   <!-- Summary overlay -->
@@ -577,7 +618,7 @@
     </div>
     <div class="summary-list" id="summary-list"></div>
     <div class="summary-footer">
-      <button class="btn-start" onclick="closeSummary()">▶ Play Again</button>
+      <button class="btn-start" onclick="goHome()">← Back to Home</button>
     </div>
   </div>
 
@@ -588,60 +629,77 @@
 
   <div class="app">
 
-    <!-- Logo -->
-    <div class="logo">Di · Da · Do</div>
-    <div class="logo-sub">The humming game</div>
+    <!-- ── HOME SCREEN ── -->
+    <div class="screen" id="home-screen">
+      <div class="logo" style="margin-top:32px">Di · Da · Do</div>
+      <div class="logo-sub">The humming game</div>
 
-    <!-- Team selector -->
-    <div class="team-selector">
-      <button class="team-btn example-btn" id="btn-example" onclick="selectTeam(0)">Example</button>
-      <button class="team-btn active"      id="btn-team1"   onclick="selectTeam(1)">Team 1</button>
-      <button class="team-btn"             id="btn-team2"   onclick="selectTeam(2)">Team 2</button>
-    </div>
-
-    <!-- Circular timer -->
-    <div class="timer-wrap normal" id="timer-wrap">
-      <svg class="timer-svg" viewBox="0 0 130 130">
-        <circle class="timer-track" cx="65" cy="65" r="55"/>
-        <circle class="timer-ring"  cx="65" cy="65" r="55" id="timer-ring"/>
-      </svg>
-      <div class="timer-text" id="timer-text">1:00</div>
-    </div>
-
-    <!-- Scoreboard -->
-    <div class="scoreboard">
-      <div class="score-pill correct-pill">✔ Correct <span class="num" id="score">0</span></div>
-      <div class="score-pill pass-pill">✖ Pass <span class="num" id="passes">0</span></div>
-    </div>
-
-    <!-- Song card -->
-    <div class="card-wrap">
-      <div class="card" id="card">
-        <p class="card-placeholder">Choose a team &amp; press Start</p>
+      <div class="home-section">
+        <div class="home-label">Select team</div>
+        <div class="team-selector">
+          <button class="team-btn example-btn" id="btn-example" onclick="selectTeam(0)">Example</button>
+          <button class="team-btn active"      id="btn-team1"   onclick="selectTeam(1)">Team 1</button>
+          <button class="team-btn"             id="btn-team2"   onclick="selectTeam(2)">Team 2</button>
+        </div>
       </div>
+
+      <div class="home-section">
+        <div class="home-label">Round duration</div>
+        <div class="dur-selector">
+          <button class="dur-btn"        data-time="30"  onclick="selectDuration(this)">30s</button>
+          <button class="dur-btn active" data-time="60"  onclick="selectDuration(this)">60s</button>
+          <button class="dur-btn"        data-time="90"  onclick="selectDuration(this)">90s</button>
+          <button class="dur-btn"        data-time="120" onclick="selectDuration(this)">2 min</button>
+        </div>
+      </div>
+
+      <button class="btn-start" onclick="startGame()">▶ Start Game</button>
     </div>
 
-    <!-- Correct / Pass -->
-    <div class="action-buttons">
-      <button class="btn-action btn-correct" id="btn-correct" onclick="correct()" disabled>✔ Correct</button>
-      <button class="btn-action btn-pass"    id="btn-pass"    onclick="pass()"    disabled>✖ Pass</button>
-    </div>
+    <!-- ── GAME SCREEN ── -->
+    <div class="screen hidden" id="game-screen">
 
-    <!-- Start -->
-    <button class="btn-start" id="btn-start" onclick="startGame()">▶ Start Game</button>
+      <div class="game-topbar" style="margin-top:16px">
+        <button class="btn-home" onclick="goHome()">← Home</button>
+        <div class="team-badge" id="team-badge">Team 1</div>
+      </div>
 
-    <!-- Progress -->
-    <div class="progress-bar-wrap" id="progress-wrap" style="display:none">
-      <div class="progress-bar" id="progress-bar"></div>
+      <div class="timer-wrap normal" id="timer-wrap">
+        <svg class="timer-svg" viewBox="0 0 130 130">
+          <circle class="timer-track" cx="65" cy="65" r="55"/>
+          <circle class="timer-ring"  cx="65" cy="65" r="55" id="timer-ring"/>
+        </svg>
+        <div class="timer-text" id="timer-text">1:00</div>
+      </div>
+
+      <div class="scoreboard">
+        <div class="score-pill correct-pill">✔ Correct <span class="num" id="score">0</span></div>
+        <div class="score-pill pass-pill">✖ Pass <span class="num" id="passes">0</span></div>
+      </div>
+
+      <div class="card-wrap">
+        <div class="card" id="card">
+          <p class="card-placeholder">Get ready…</p>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-action btn-correct" id="btn-correct" onclick="correct()" disabled>✔ Correct</button>
+        <button class="btn-action btn-pass"    id="btn-pass"    onclick="pass()"    disabled>✖ Pass</button>
+      </div>
+
+      <div class="progress-bar-wrap" id="progress-wrap" style="display:none">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <div class="progress-label" id="progress-label"></div>
+
     </div>
-    <div class="progress-label" id="progress-label"></div>
 
   </div>
 
   <script>
     // ─────────────────────────────────────────────
     // SONG LISTS
-    // Each entry: { song: "Title", artist: "Artist", type: "DI" | "DA" | "DO" }
     // ─────────────────────────────────────────────
 
     const EXAMPLE = [
@@ -705,32 +763,161 @@
     ];
 
     // ─────────────────────────────────────────────
+    // STATE
+    // ─────────────────────────────────────────────
 
-    const TOTAL_TIME = 60;
-    const CIRCUMFERENCE = 2 * Math.PI * 55; // r=55
+    const CIRCUMFERENCE = 2 * Math.PI * 55;
 
-    let currentTeam = 1;
-    let queue = [];
-    let currentIndex = 0;
-    let score = 0;
-    let passCount = 0;
-    let gameActive = false;
-    let timeLeft = TOTAL_TIME;
-    let timerInterval = null;
-    let results = [];
+    let currentTeam    = 1;
+    let selectedDur    = 60;
+    let totalTime      = 60;
+    let queue          = [];
+    let currentIndex   = 0;
+    let score          = 0;
+    let passCount      = 0;
+    let gameActive     = false;
+    let timeLeft       = 60;
+    let timerInterval  = null;
+    let results        = [];
 
-    // ── Timer ring setup ──
     const ring = document.getElementById('timer-ring');
     ring.style.strokeDasharray = CIRCUMFERENCE;
     ring.style.strokeDashoffset = 0;
 
+    // ─────────────────────────────────────────────
+    // AUDIO (Web Audio API — no files needed)
+    // ─────────────────────────────────────────────
+
+    let audioCtx = null;
+
+    function getAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playTone(freq, dur, type = 'sine', vol = 0.4, startDelay = 0) {
+      const ctx = getAudio();
+      const t   = ctx.currentTime + startDelay;
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(vol, t + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+    }
+
+    function soundCountdown(n) {
+      if (n > 0) {
+        // All three lights: identical short beep, like F1
+        playTone(880, 0.12, 'sine', 0.55);
+      } else {
+        // Lights out — GO! Rising two-tone burst
+        playTone(880, 0.08, 'sine', 0.5,  0);
+        playTone(1320, 0.4, 'sine', 0.55, 0.07);
+      }
+    }
+
+    function soundCorrect() {
+      // Ascending bling: C5 → G5 → C6
+      playTone(523,  0.08, 'sine', 0.35, 0);
+      playTone(784,  0.12, 'sine', 0.35, 0.08);
+      playTone(1047, 0.3,  'sine', 0.28, 0.18);
+    }
+
+    function soundPass() {
+      // Descending buzzer: sawtooth drop
+      const ctx  = getAudio();
+      const t    = ctx.currentTime;
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(280, t);
+      osc.frequency.exponentialRampToValueAtTime(70, t + 0.45);
+      gain.gain.setValueAtTime(0.22, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+      osc.start(t);
+      osc.stop(t + 0.5);
+    }
+
+    function soundTick(intense) {
+      // Sharp clock tick — noticeable but not annoying
+      playTone(intense ? 1200 : 900, 0.05, 'triangle', intense ? 0.55 : 0.35);
+    }
+
+    function soundTimeUp() {
+      // Basketball game-end buzzer — harsh, sustained, loud
+      const ctx = getAudio();
+      const t   = ctx.currentTime;
+
+      // Layer 1: main square buzz
+      const osc1  = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.connect(gain1); gain1.connect(ctx.destination);
+      osc1.type = 'square';
+      osc1.frequency.setValueAtTime(160, t);
+      osc1.frequency.setValueAtTime(152, t + 0.05);
+      osc1.frequency.setValueAtTime(160, t + 0.1);
+      osc1.frequency.setValueAtTime(155, t + 0.15);
+      gain1.gain.setValueAtTime(0.45, t);
+      gain1.gain.setValueAtTime(0.45, t + 0.9);
+      gain1.gain.exponentialRampToValueAtTime(0.001, t + 1.1);
+      osc1.start(t); osc1.stop(t + 1.15);
+
+      // Layer 2: gritty overtone for extra harshness
+      const osc2  = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.connect(gain2); gain2.connect(ctx.destination);
+      osc2.type = 'sawtooth';
+      osc2.frequency.setValueAtTime(320, t);
+      gain2.gain.setValueAtTime(0.2, t);
+      gain2.gain.exponentialRampToValueAtTime(0.001, t + 1.0);
+      osc2.start(t); osc2.stop(t + 1.05);
+    }
+
+    // ─────────────────────────────────────────────
+    // NAVIGATION
+    // ─────────────────────────────────────────────
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function goHome() {
+      clearInterval(timerInterval);
+      gameActive = false;
+      document.getElementById('summary-overlay').classList.remove('show');
+      showScreen('home-screen');
+    }
+
+    // ─────────────────────────────────────────────
+    // HOME SCREEN CONTROLS
+    // ─────────────────────────────────────────────
+
     function selectTeam(n) {
-      if (gameActive) return;
       currentTeam = n;
       document.getElementById('btn-example').classList.toggle('active', n === 0);
       document.getElementById('btn-team1').classList.toggle('active', n === 1);
       document.getElementById('btn-team2').classList.toggle('active', n === 2);
     }
+
+    function selectDuration(btn) {
+      document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedDur = parseInt(btn.dataset.time);
+    }
+
+    // ─────────────────────────────────────────────
+    // GAME LOGIC
+    // ─────────────────────────────────────────────
 
     function shuffle(arr) {
       const a = [...arr];
@@ -745,29 +932,27 @@
       const list = currentTeam === 0 ? EXAMPLE : currentTeam === 1 ? TEAM1 : TEAM2;
       if (!list.length) { alert('No songs yet!'); return; }
 
-      clearInterval(timerInterval);
-      gameActive = false;
+      // Init audio on first user gesture
+      getAudio();
 
-      // disable buttons during countdown
-      document.getElementById('btn-correct').disabled = true;
-      document.getElementById('btn-pass').disabled = true;
-      document.getElementById('btn-start').disabled = true;
-      document.getElementById('btn-team1').disabled = true;
-      document.getElementById('btn-team2').disabled = true;
-
-      // reset state
-      queue = shuffle(list);
+      totalTime    = selectedDur;
+      queue        = shuffle(list);
       currentIndex = 0;
-      score = 0;
-      passCount = 0;
-      results = [];
-      timeLeft = TOTAL_TIME;
+      score        = 0;
+      passCount    = 0;
+      results      = [];
+      timeLeft     = totalTime;
+
+      const teamNames = { 0: 'Example', 1: 'Team 1', 2: 'Team 2' };
+      document.getElementById('team-badge').textContent = teamNames[currentTeam];
+
+      showScreen('game-screen');
       updateScoreboard();
       updateTimer();
 
-      // reset card
-      const card = document.getElementById('card');
-      card.innerHTML = '<p class="card-placeholder">Get ready…</p>';
+      document.getElementById('card').innerHTML = '<p class="card-placeholder">Get ready…</p>';
+      document.getElementById('btn-correct').disabled = true;
+      document.getElementById('btn-pass').disabled = true;
       document.getElementById('progress-wrap').style.display = 'none';
       document.getElementById('progress-label').textContent = '';
 
@@ -775,10 +960,6 @@
         gameActive = true;
         document.getElementById('btn-correct').disabled = false;
         document.getElementById('btn-pass').disabled = false;
-        document.getElementById('btn-start').disabled = false;
-        document.getElementById('btn-start').textContent = '↺ Restart';
-        document.getElementById('btn-team1').disabled = false;
-        document.getElementById('btn-team2').disabled = false;
         document.getElementById('progress-wrap').style.display = 'block';
         showCard(false);
         timerInterval = setInterval(tick, 1000);
@@ -787,19 +968,20 @@
 
     function runCountdown(n, done) {
       const overlay = document.getElementById('countdown-overlay');
-      const num = document.getElementById('countdown-num');
+      const num     = document.getElementById('countdown-num');
 
       if (n === 0) {
+        soundCountdown(0);
         overlay.classList.remove('show');
         done();
         return;
       }
 
+      soundCountdown(n);
       overlay.classList.add('show');
       num.textContent = n;
-      // re-trigger animation
       num.style.animation = 'none';
-      num.offsetHeight; // reflow
+      num.offsetHeight;
       num.style.animation = '';
 
       setTimeout(() => runCountdown(n - 1, done), 900);
@@ -808,7 +990,12 @@
     function tick() {
       timeLeft--;
       updateTimer();
-      if (timeLeft <= 0) endGame('time');
+
+      const intense = timeLeft <= 10;
+      const ticking = timeLeft <= 20;
+      if (ticking) soundTick(intense);
+
+      if (timeLeft <= 0) { soundTimeUp(); endGame('time'); }
     }
 
     function updateTimer() {
@@ -818,14 +1005,14 @@
       const secs = timeLeft % 60;
       text.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
 
-      const offset = CIRCUMFERENCE * (1 - Math.max(timeLeft, 0) / TOTAL_TIME);
+      const offset = CIRCUMFERENCE * (1 - Math.max(timeLeft, 0) / totalTime);
       ring.style.strokeDashoffset = offset;
 
       wrap.className = 'timer-wrap ' + (timeLeft > 20 ? 'normal' : timeLeft > 10 ? 'warning' : 'danger');
     }
 
     function showCard(animate = true) {
-      const card = document.getElementById('card');
+      const card  = document.getElementById('card');
       const total = queue.length;
 
       if (currentIndex >= total) { endGame('done'); return; }
@@ -844,7 +1031,6 @@
           void card.offsetWidth;
           card.classList.add('slide-in');
         }
-        // progress
         const pct = ((currentIndex + 1) / total * 100).toFixed(1);
         document.getElementById('progress-bar').style.width = pct + '%';
         document.getElementById('progress-label').textContent = `Song ${currentIndex + 1} of ${total}`;
@@ -865,6 +1051,7 @@
       currentIndex++;
       updateScoreboard();
       flashCard('correct');
+      soundCorrect();
       launchConfetti();
       setTimeout(() => showCard(true), 120);
     }
@@ -876,6 +1063,7 @@
       currentIndex++;
       updateScoreboard();
       flashCard('pass');
+      soundPass();
       setTimeout(() => showCard(true), 120);
     }
 
@@ -892,17 +1080,15 @@
 
       document.getElementById('btn-correct').disabled = true;
       document.getElementById('btn-pass').disabled = true;
-      document.getElementById('btn-start').textContent = '▶ Play Again';
       document.getElementById('progress-bar').style.width = '100%';
       document.getElementById('progress-label').textContent = '';
 
       const isTime = reason === 'time';
       const teamLabel = currentTeam === 0 ? 'Example' : `Team ${currentTeam}`;
 
-      // Populate summary overlay
-      document.getElementById('summary-icon').textContent = isTime ? '⏰' : '🎉';
+      document.getElementById('summary-icon').textContent  = isTime ? '⏰' : '🎉';
       document.getElementById('summary-title').textContent = isTime ? "Time's up!" : "All done!";
-      document.getElementById('summary-pills').innerHTML = `
+      document.getElementById('summary-pills').innerHTML   = `
         <div class="score-pill correct-pill">✔ Correct <span class="num">${score}</span></div>
         <div class="score-pill pass-pill">✖ Pass <span class="num">${passCount}</span></div>
       `;
@@ -924,18 +1110,15 @@
       if (!isTime || score > 0) launchConfetti();
     }
 
-    function closeSummary() {
-      document.getElementById('summary-overlay').classList.remove('show');
-    }
-
     function updateScoreboard() {
-      document.getElementById('score').textContent = score;
+      document.getElementById('score').textContent  = score;
       document.getElementById('passes').textContent = passCount;
     }
 
     // ─────────────────────────────────────────────
-    // Confetti
+    // CONFETTI
     // ─────────────────────────────────────────────
+
     const confettiCanvas = document.getElementById('confetti-canvas');
     const ctx = confettiCanvas.getContext('2d');
     let confettiParticles = [];
