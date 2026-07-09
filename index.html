@@ -59,6 +59,54 @@
       to   { transform: translate(60px, 40px) scale(1.15); }
     }
 
+    /* ── Splash screen ── */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #08000f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      animation: splashOut 0.8s ease-in 4.2s forwards;
+    }
+    #splash.hidden { display: none; }
+
+    @keyframes splashOut {
+      to { opacity: 0; pointer-events: none; }
+    }
+
+    .splash-logo-wrap {
+      animation: splashIn 0.7s ease-out;
+    }
+    .splash-publisher {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      animation: splashIn 0.7s ease-out 0.2s both;
+    }
+
+    @keyframes splashIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .splash-divider {
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+      margin-bottom: 2px;
+    }
+    .splash-by {
+      font-size: 0.6rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.22);
+    }
+
     /* ── Canvas for confetti ── */
     #confetti-canvas {
       position: fixed;
@@ -618,6 +666,70 @@
     <div class="orb orb1"></div>
     <div class="orb orb2"></div>
     <div class="orb orb3"></div>
+  </div>
+
+  <!-- Splash screen -->
+  <div id="splash">
+
+    <!-- Di Da Do It animated logo -->
+    <div class="splash-logo-wrap">
+      <svg viewBox="0 0 280 250" xmlns="http://www.w3.org/2000/svg"
+           style="width:220px;height:auto;overflow:visible;filter:drop-shadow(0 0 18px rgba(100,60,255,0.3))">
+        <defs>
+          <linearGradient id="splash-grad" gradientUnits="userSpaceOnUse"
+                          x1="0" y1="0" x2="280" y2="0" spreadMethod="repeat">
+            <stop offset="0%"   stop-color="#00d4ff"/>
+            <stop offset="33%"  stop-color="#ff9500"/>
+            <stop offset="66%"  stop-color="#bf5fff"/>
+            <stop offset="100%" stop-color="#00d4ff"/>
+            <animateTransform attributeName="gradientTransform" type="translate"
+                              from="0 0" to="-280 0" dur="4s"
+                              repeatCount="indefinite" calcMode="linear"/>
+          </linearGradient>
+        </defs>
+        <text x="12" y="86"   font-family="-apple-system,'Segoe UI',system-ui,sans-serif" font-size="88" font-weight="900" letter-spacing="-2" fill="url(#splash-grad)">DI</text>
+        <text x="50" y="165"  font-family="-apple-system,'Segoe UI',system-ui,sans-serif" font-size="88" font-weight="900" letter-spacing="-2" fill="url(#splash-grad)">DA</text>
+        <text x="12" y="238"  font-family="-apple-system,'Segoe UI',system-ui,sans-serif" font-size="84" font-weight="900" letter-spacing="-2" fill="url(#splash-grad)">DO</text>
+        <text x="152" y="232" font-family="-apple-system,'Segoe UI',system-ui,sans-serif" font-size="46" font-weight="900" letter-spacing="1"  fill="rgba(255,255,255,0.75)">IT</text>
+      </svg>
+    </div>
+
+    <!-- JV Games publisher mark -->
+    <div class="splash-publisher">
+      <div class="splash-divider"></div>
+      <div class="splash-by">a</div>
+
+      <svg viewBox="0 0 200 72" xmlns="http://www.w3.org/2000/svg"
+           style="width:160px;height:auto;overflow:visible;filter:drop-shadow(0 0 12px rgba(0,212,255,0.2))">
+        <defs>
+          <linearGradient id="jv-grad" gradientUnits="userSpaceOnUse"
+                          x1="0" y1="0" x2="200" y2="0" spreadMethod="repeat">
+            <stop offset="0%"   stop-color="#00d4ff"/>
+            <stop offset="50%"  stop-color="#ff9500"/>
+            <stop offset="100%" stop-color="#bf5fff"/>
+            <animateTransform attributeName="gradientTransform" type="translate"
+                              from="0 0" to="-200 0" dur="4s"
+                              repeatCount="indefinite" calcMode="linear"/>
+          </linearGradient>
+        </defs>
+        <!-- JV monogram -->
+        <text x="100" y="58" text-anchor="middle"
+              font-family="-apple-system,'Segoe UI',system-ui,sans-serif"
+              font-size="68" font-weight="900" letter-spacing="-3"
+              fill="url(#jv-grad)">JV</text>
+      </svg>
+
+      <svg viewBox="0 0 200 18" xmlns="http://www.w3.org/2000/svg"
+           style="width:130px;height:auto">
+        <text x="100" y="14" text-anchor="middle"
+              font-family="-apple-system,'Segoe UI',system-ui,sans-serif"
+              font-size="11" font-weight="700" letter-spacing="7"
+              fill="rgba(255,255,255,0.45)">GAMES</text>
+      </svg>
+
+      <div class="splash-by">production</div>
+    </div>
+
   </div>
 
   <canvas id="confetti-canvas"></canvas>
@@ -1256,6 +1368,11 @@
   </script>
 
   <script>
+    // Remove splash from DOM after fade-out completes
+    document.getElementById('splash').addEventListener('animationend', function() {
+      this.classList.add('hidden');
+    });
+
     // Register service worker for offline / PWA support
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
