@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Di Da Do It!</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --di: #00d4ff;
+      --da: #ff9500;
+      --do: #bf5fff;
+      --correct: #00c87a;
+      --pass: #ff3b5c;
+      --card-bg: rgba(255,255,255,0.05);
+      --card-border: rgba(255,255,255,0.12);
+    }
+
+    body {
+      font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+      background: #08000f;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ── Animated bg orbs ── */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.25;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .orb1 { width: 500px; height: 500px; background: #7b2fff; top: -100px; left: -100px; animation-duration: 20s; }
+    .orb2 { width: 400px; height: 400px; background: #00c8ff; bottom: -80px; right: -80px; animation-duration: 16s; animation-delay: -5s; }
+    .orb3 { width: 300px; height: 300px; background: #ff4d8b; top: 40%; left: 30%; animation-duration: 22s; animation-delay: -10s; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(60px, 40px) scale(1.15); }
+    }
+
+    /* ── Canvas for confetti ── */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── Layout ── */
+    .app {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 20px 36px;
+      gap: 0;
+    }
+
+    /* ── Logo ── */
+    .logo {
+      font-size: 2.6rem;
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--di), var(--da), var(--do), var(--di));
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+      margin-bottom: 6px;
+      line-height: 1.1;
+      text-align: center;
+    }
+    .logo-sub {
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 0%; }
+      100% { background-position: 300%; }
+    }
+
+    /* ── Team selector ── */
+    .team-selector {
+      display: flex;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 22px;
+    }
+    .team-btn {
+      padding: 10px 32px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 46px;
+      cursor: pointer;
+      background: transparent;
+      color: rgba(255,255,255,0.45);
+      transition: all 0.25s;
+      letter-spacing: 1px;
+    }
+    .team-btn.active {
+      background: linear-gradient(135deg, #7b2fff, #bf5fff);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(123,47,255,0.5);
+    }
+    .example-btn.active {
+      background: linear-gradient(135deg, #1a6b4a, #00c87a);
+      box-shadow: 0 4px 20px rgba(0,200,122,0.4);
+    }
+    .team-btn:disabled { cursor: default; }
+
+    /* ── Circular Timer ── */
+    .timer-wrap {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      margin-bottom: 20px;
+    }
+    .timer-svg {
+      transform: rotate(-90deg);
+      width: 130px;
+      height: 130px;
+    }
+    .timer-track {
+      fill: none;
+      stroke: rgba(255,255,255,0.08);
+      stroke-width: 8;
+    }
+    .timer-ring {
+      fill: none;
+      stroke: var(--di);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 345;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 0.9s linear, stroke 0.4s;
+    }
+    .timer-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      transition: color 0.4s;
+    }
+    .timer-wrap.warning .timer-ring { stroke: var(--da); }
+    .timer-wrap.danger  .timer-ring { stroke: var(--pass); }
+    .timer-wrap.warning .timer-text { color: var(--da); }
+    .timer-wrap.danger  .timer-text { color: var(--pass); animation: pulse 0.5s ease-in-out infinite alternate; }
+
+    @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.08); } }
+
+    /* ── Score pills ── */
+    .scoreboard {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .score-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+    .score-pill.correct-pill {
+      background: rgba(0,200,122,0.12);
+      border-color: rgba(0,200,122,0.3);
+      color: var(--correct);
+    }
+    .score-pill.pass-pill {
+      background: rgba(255,59,92,0.12);
+      border-color: rgba(255,59,92,0.3);
+      color: var(--pass);
+    }
+    .score-pill .num {
+      font-size: 1.3rem;
+      font-weight: 900;
+    }
+
+    /* ── Song Card ── */
+    .card-wrap {
+      width: 100%;
+      perspective: 1000px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 40px 28px 36px;
+      text-align: center;
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      transition: transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    }
+
+    /* Card slide animation */
+    .card.slide-out {
+      animation: slideOut 0.2s ease-in forwards;
+    }
+    .card.slide-in {
+      animation: slideIn 0.25s ease-out forwards;
+    }
+    @keyframes slideOut {
+      to { transform: translateX(-60px); opacity: 0; }
+    }
+    @keyframes slideIn {
+      from { transform: translateX(60px); opacity: 0; }
+      to   { transform: translateX(0);   opacity: 1; }
+    }
+
+    /* Flash overlays */
+    .card.flash-correct { animation: flashGreen 0.35s ease-out; }
+    .card.flash-pass    { animation: flashRed   0.35s ease-out; }
+    @keyframes flashGreen {
+      0%   { box-shadow: 0 0 0 0 rgba(0,200,122,0.0); }
+      40%  { box-shadow: 0 0 0 14px rgba(0,200,122,0.45); }
+      100% { box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    }
+    @keyframes flashRed {
+      0%   { box-shadow: 0 0 0 0 rgba(255,59,92,0.0); }
+      40%  { box-shadow: 0 0 0 14px rgba(255,59,92,0.45); }
+      100% { box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    }
+
+    .syllable {
+      font-size: 5.5rem;
+      font-weight: 900;
+      letter-spacing: 8px;
+      line-height: 1;
+      text-shadow: 0 0 40px currentColor, 0 0 80px currentColor;
+      animation: glowPop 0.4s ease-out;
+    }
+    .syllable.DI { color: var(--di); }
+    .syllable.DA { color: var(--da); }
+    .syllable.DO { color: var(--do); }
+
+    @keyframes glowPop {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .divider {
+      width: 40px;
+      height: 2px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+    }
+
+    .song-title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.25;
+    }
+    .song-artist {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.5);
+      font-weight: 500;
+    }
+    .card-placeholder {
+      color: rgba(255,255,255,0.25);
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
+
+    /* ── Action buttons ── */
+    .action-buttons {
+      display: flex;
+      gap: 14px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .btn-action {
+      flex: 1;
+      padding: 20px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: transform 0.12s, box-shadow 0.12s, opacity 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-action::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.1);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .btn-action:hover:not(:disabled)::after { opacity: 1; }
+    .btn-action:active:not(:disabled) { transform: scale(0.95); }
+    .btn-action:disabled { opacity: 0.3; cursor: default; }
+
+    .btn-correct {
+      background: linear-gradient(135deg, #00a86b, #00e68a);
+      color: #fff;
+      box-shadow: 0 8px 30px rgba(0,200,122,0.35);
+    }
+    .btn-pass {
+      background: linear-gradient(135deg, #cc1f3e, #ff3b5c);
+      color: #fff;
+      box-shadow: 0 8px 30px rgba(255,59,92,0.35);
+    }
+
+    /* ── Start button ── */
+    .btn-start {
+      width: 100%;
+      padding: 20px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #7b2fff, #bf5fff);
+      color: #fff;
+      box-shadow: 0 10px 40px rgba(123,47,255,0.5);
+      transition: transform 0.12s, box-shadow 0.2s, opacity 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-start::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.1);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .btn-start:hover::after { opacity: 1; }
+    .btn-start:active { transform: scale(0.97); }
+
+    /* ── Progress ── */
+    .progress-bar-wrap {
+      width: 100%;
+      height: 3px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 3px;
+      margin-top: 18px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #7b2fff, #bf5fff);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+    .progress-label {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.25);
+      margin-top: 6px;
+      letter-spacing: 1px;
+    }
+
+    /* ── Done / End screen ── */
+    .done-icon { font-size: 3.5rem; margin-bottom: 4px; }
+    .done-title { font-size: 1.6rem; font-weight: 900; color: #fff; }
+    .done-sub { font-size: 0.95rem; color: rgba(255,255,255,0.45); margin-top: 4px; }
+
+    /* ── Countdown overlay ── */
+    #countdown-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(8,0,15,0.85);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+    }
+    #countdown-overlay.show { display: flex; }
+    .countdown-num {
+      font-size: 12rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--di), var(--do));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: countPop 0.8s ease-out forwards;
+    }
+    @keyframes countPop {
+      0%   { transform: scale(2);   opacity: 0; }
+      30%  { transform: scale(0.9); opacity: 1; }
+      80%  { transform: scale(1);   opacity: 1; }
+      100% { transform: scale(0.7); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+
+  <!-- Confetti canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Countdown overlay -->
+  <div id="countdown-overlay">
+    <div class="countdown-num" id="countdown-num">3</div>
+  </div>
+
+  <div class="app">
+
+    <!-- Logo -->
+    <div class="logo">Di · Da · Do</div>
+    <div class="logo-sub">The humming game</div>
+
+    <!-- Team selector -->
+    <div class="team-selector">
+      <button class="team-btn example-btn" id="btn-example" onclick="selectTeam(0)">Example</button>
+      <button class="team-btn active"      id="btn-team1"   onclick="selectTeam(1)">Team 1</button>
+      <button class="team-btn"             id="btn-team2"   onclick="selectTeam(2)">Team 2</button>
+    </div>
+
+    <!-- Circular timer -->
+    <div class="timer-wrap normal" id="timer-wrap">
+      <svg class="timer-svg" viewBox="0 0 130 130">
+        <circle class="timer-track" cx="65" cy="65" r="55"/>
+        <circle class="timer-ring"  cx="65" cy="65" r="55" id="timer-ring"/>
+      </svg>
+      <div class="timer-text" id="timer-text">1:00</div>
+    </div>
+
+    <!-- Scoreboard -->
+    <div class="scoreboard">
+      <div class="score-pill correct-pill">✔ Correct <span class="num" id="score">0</span></div>
+      <div class="score-pill pass-pill">✖ Pass <span class="num" id="passes">0</span></div>
+    </div>
+
+    <!-- Song card -->
+    <div class="card-wrap">
+      <div class="card" id="card">
+        <p class="card-placeholder">Choose a team &amp; press Start</p>
+      </div>
+    </div>
+
+    <!-- Correct / Pass -->
+    <div class="action-buttons">
+      <button class="btn-action btn-correct" id="btn-correct" onclick="correct()" disabled>✔ Correct</button>
+      <button class="btn-action btn-pass"    id="btn-pass"    onclick="pass()"    disabled>✖ Pass</button>
+    </div>
+
+    <!-- Start -->
+    <button class="btn-start" id="btn-start" onclick="startGame()">▶ Start Game</button>
+
+    <!-- Progress -->
+    <div class="progress-bar-wrap" id="progress-wrap" style="display:none">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="progress-label" id="progress-label"></div>
+
+  </div>
+
+  <script>
+    // ─────────────────────────────────────────────
+    // SONG LISTS
+    // Each entry: { song: "Title", artist: "Artist", type: "DI" | "DA" | "DO" }
+    // ─────────────────────────────────────────────
+
+    const EXAMPLE = [
+      { song: "Take On Me", artist: "a-ha", type: "DI" },
+      { song: "Living on a Prayer", artist: "Bon Jovi", type: "DA" },
+      { song: "Hey Jude", artist: "The Beatles", type: "DO" },
+    ];
+
+    const TEAM1 = [
+      { song: "Bohemian Rhapsody", artist: "Queen", type: "DI" },
+      { song: "Shape of You", artist: "Ed Sheeran", type: "DA" },
+      { song: "Blinding Lights", artist: "The Weeknd", type: "DO" },
+      { song: "Rolling in the Deep", artist: "Adele", type: "DI" },
+      { song: "Uptown Funk", artist: "Bruno Mars", type: "DA" },
+      { song: "Laat de zon in je hart", artist: "Renee Schuurmans", type: "DA"},
+      { song: "Despacito", artist: "Luis Fonsi", type: "DA" },
+      { song: "Sexy als ik dans", artist: "Nielson", type: "DI" },
+      { song: "Feesttent", artist: "Kraantje Pappie", type: "DI" },
+      { song: "Wrecking Ball", artist: "Miley Cyrus", type: "DA" },
+      { song: "Unwritten", artist: "Natasha Beddingfield", type: "DA" },
+      { song: "Ik ga zwemmen", artist: "Mart Hoogkamer", type: "DA" },
+      { song: "Als de morgen is gekomen", artist: "Jan Smit", type: "DO" },
+      { song: "Fireball", artist: "Pitbull", type: "DI" },
+      { song: "Boom, Boom, Boom, Boom!", artist: "Vengaboys", type: "DI" },
+      { song: "In Spanje", artist: "Mart Hoogkamer", type: "DI" },
+      { song: "Eye of the Tiger", artist: "Survivor", type: "DA" },
+      { song: "Dancing Queen", artist: "Abba", type: "DA" },
+      { song: "Sweet Caroline", artist: "Neil Diamond", type: "DA" },
+      { song: "Que si Que no", artist: "Jody Bernal", type: "DA" },
+      { song: "Rainbow in the sky", artist: "Paul Elstak", type: "DA" },
+      { song: "Europapa", artist: "Joost Klein", type: "DA" },
+      { song: "See you Again", artist: "Charlie Puth", type: "DI" },
+      { song: "Zij gelooft in mij", artist: "Andre Hazes", type: "DO" },
+    ];
+
+    const TEAM2 = [
+      { song: "Billie Jean", artist: "Michael Jackson", type: "DI" },
+      { song: "Bad Guy", artist: "Billie Eilish", type: "DA" },
+      { song: "Happy", artist: "Pharrell Williams", type: "DO" },
+      { song: "Someone Like You", artist: "Adele", type: "DI" },
+      { song: "Levitating", artist: "Dua Lipa", type: "DA" },
+      { song: "Baby", artist: "Justin Bieber", type: "DO" },
+      { song: "Brabant", artist: "Guus Meeuwis", type: "DI" },
+      { song: "Als het avond is", artist: "Suzan & Freek", type: "DA" },
+      { song: "One Kiss", artist: "Dua Lipa", type: "DI" },
+      { song: "Watskebeurt", artist: "Jeugd van Tegenwoordig", type: "DO" },
+      { song: "Oja Ole", artist: "K3", type: "DA" },
+      { song: "Rosanne", artist: "Nick & Simon", type: "DI" },
+      { song: "Potentie", artist: "Stefan & Sean, Bram Krikke", type: "DO" },
+      { song: "Ik neem je mee", artist: "Gers Pardoel", type: "DI" },
+      { song: "Gimme! Gimme! Gimme!", artist: "Abba", type: "DO" },
+      { song: "Het Vrolijke Kosterlied", artist: "Johnny", type: "DA" },
+      { song: "We will rock you", artist: "Queen", type: "DA" },
+      { song: "Single Ladies", artist: "Beyonce", type: "DI" },
+      { song: "Ice Ice Baby", artist: "Vanilla Ice", type: "DA" },
+      { song: "Heb je even voor mij", artist: "Frans Bauer", type: "DO" },
+      { song: "Umbrella", artist: "Jay-Z, Rihanna", type: "DA" },
+      { song: "Kleine Jongen", artist: "Andre Hazes", type: "DA" },
+      { song: "Levels", artist: "Avicii", type: "DI" },
+      { song: "Pompeii", artist: "Bastille", type: "DI" },
+    ];
+
+    // ─────────────────────────────────────────────
+
+    const TOTAL_TIME = 60;
+    const CIRCUMFERENCE = 2 * Math.PI * 55; // r=55
+
+    let currentTeam = 1;
+    let queue = [];
+    let currentIndex = 0;
+    let score = 0;
+    let passCount = 0;
+    let gameActive = false;
+    let timeLeft = TOTAL_TIME;
+    let timerInterval = null;
+
+    // ── Timer ring setup ──
+    const ring = document.getElementById('timer-ring');
+    ring.style.strokeDasharray = CIRCUMFERENCE;
+    ring.style.strokeDashoffset = 0;
+
+    function selectTeam(n) {
+      if (gameActive) return;
+      currentTeam = n;
+      document.getElementById('btn-example').classList.toggle('active', n === 0);
+      document.getElementById('btn-team1').classList.toggle('active', n === 1);
+      document.getElementById('btn-team2').classList.toggle('active', n === 2);
+    }
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function startGame() {
+      const list = currentTeam === 0 ? EXAMPLE : currentTeam === 1 ? TEAM1 : TEAM2;
+      if (!list.length) { alert('No songs yet!'); return; }
+
+      clearInterval(timerInterval);
+      gameActive = false;
+
+      // disable buttons during countdown
+      document.getElementById('btn-correct').disabled = true;
+      document.getElementById('btn-pass').disabled = true;
+      document.getElementById('btn-start').disabled = true;
+      document.getElementById('btn-team1').disabled = true;
+      document.getElementById('btn-team2').disabled = true;
+
+      // reset state
+      queue = shuffle(list);
+      currentIndex = 0;
+      score = 0;
+      passCount = 0;
+      timeLeft = TOTAL_TIME;
+      updateScoreboard();
+      updateTimer();
+
+      // reset card
+      const card = document.getElementById('card');
+      card.innerHTML = '<p class="card-placeholder">Get ready…</p>';
+      document.getElementById('progress-wrap').style.display = 'none';
+      document.getElementById('progress-label').textContent = '';
+
+      runCountdown(3, () => {
+        gameActive = true;
+        document.getElementById('btn-correct').disabled = false;
+        document.getElementById('btn-pass').disabled = false;
+        document.getElementById('btn-start').disabled = false;
+        document.getElementById('btn-start').textContent = '↺ Restart';
+        document.getElementById('btn-team1').disabled = false;
+        document.getElementById('btn-team2').disabled = false;
+        document.getElementById('progress-wrap').style.display = 'block';
+        showCard(false);
+        timerInterval = setInterval(tick, 1000);
+      });
+    }
+
+    function runCountdown(n, done) {
+      const overlay = document.getElementById('countdown-overlay');
+      const num = document.getElementById('countdown-num');
+
+      if (n === 0) {
+        overlay.classList.remove('show');
+        done();
+        return;
+      }
+
+      overlay.classList.add('show');
+      num.textContent = n;
+      // re-trigger animation
+      num.style.animation = 'none';
+      num.offsetHeight; // reflow
+      num.style.animation = '';
+
+      setTimeout(() => runCountdown(n - 1, done), 900);
+    }
+
+    function tick() {
+      timeLeft--;
+      updateTimer();
+      if (timeLeft <= 0) endGame('time');
+    }
+
+    function updateTimer() {
+      const wrap = document.getElementById('timer-wrap');
+      const text = document.getElementById('timer-text');
+      const mins = Math.floor(timeLeft / 60);
+      const secs = timeLeft % 60;
+      text.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+      const offset = CIRCUMFERENCE * (1 - Math.max(timeLeft, 0) / TOTAL_TIME);
+      ring.style.strokeDashoffset = offset;
+
+      wrap.className = 'timer-wrap ' + (timeLeft > 20 ? 'normal' : timeLeft > 10 ? 'warning' : 'danger');
+    }
+
+    function showCard(animate = true) {
+      const card = document.getElementById('card');
+      const total = queue.length;
+
+      if (currentIndex >= total) { endGame('done'); return; }
+
+      const entry = queue[currentIndex];
+
+      const render = () => {
+        card.innerHTML = `
+          <div class="syllable ${entry.type}">${entry.type}</div>
+          <div class="divider"></div>
+          <div class="song-title">${entry.song}</div>
+          <div class="song-artist">${entry.artist}</div>
+        `;
+        if (animate) {
+          card.classList.remove('slide-in');
+          void card.offsetWidth;
+          card.classList.add('slide-in');
+        }
+        // progress
+        const pct = ((currentIndex + 1) / total * 100).toFixed(1);
+        document.getElementById('progress-bar').style.width = pct + '%';
+        document.getElementById('progress-label').textContent = `Song ${currentIndex + 1} of ${total}`;
+      };
+
+      if (animate) {
+        card.classList.add('slide-out');
+        setTimeout(() => { card.classList.remove('slide-out'); render(); }, 180);
+      } else {
+        render();
+      }
+    }
+
+    function correct() {
+      if (!gameActive) return;
+      score++;
+      currentIndex++;
+      updateScoreboard();
+      flashCard('correct');
+      launchConfetti();
+      setTimeout(() => showCard(true), 120);
+    }
+
+    function pass() {
+      if (!gameActive) return;
+      passCount++;
+      currentIndex++;
+      updateScoreboard();
+      flashCard('pass');
+      setTimeout(() => showCard(true), 120);
+    }
+
+    function flashCard(type) {
+      const card = document.getElementById('card');
+      card.classList.remove('flash-correct', 'flash-pass');
+      void card.offsetWidth;
+      card.classList.add(type === 'correct' ? 'flash-correct' : 'flash-pass');
+    }
+
+    function endGame(reason) {
+      clearInterval(timerInterval);
+      gameActive = false;
+
+      const card = document.getElementById('card');
+      const isTime = reason === 'time';
+      card.innerHTML = `
+        <div class="done-icon">${isTime ? '⏰' : '🎉'}</div>
+        <div class="done-title">${isTime ? "Time's up!" : "All done!"}</div>
+        <div class="divider" style="margin:10px auto"></div>
+        <div class="song-title">${score} correct &nbsp;·&nbsp; ${passCount} passes</div>
+        <div class="done-sub">Great round, Team ${currentTeam}!</div>
+      `;
+      card.classList.remove('slide-out', 'slide-in');
+
+      document.getElementById('btn-correct').disabled = true;
+      document.getElementById('btn-pass').disabled = true;
+      document.getElementById('btn-start').textContent = '▶ Play Again';
+      document.getElementById('progress-bar').style.width = '100%';
+      document.getElementById('progress-label').textContent = '';
+
+      if (!isTime) launchConfetti();
+    }
+
+    function updateScoreboard() {
+      document.getElementById('score').textContent = score;
+      document.getElementById('passes').textContent = passCount;
+    }
+
+    // ─────────────────────────────────────────────
+    // Confetti
+    // ─────────────────────────────────────────────
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const ctx = confettiCanvas.getContext('2d');
+    let confettiParticles = [];
+    let confettiAnim = null;
+
+    function resizeCanvas() {
+      confettiCanvas.width  = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function launchConfetti() {
+      const colors = ['#00d4ff','#ff9500','#bf5fff','#00e68a','#ff3b5c','#fff'];
+      for (let i = 0; i < 80; i++) {
+        confettiParticles.push({
+          x: Math.random() * confettiCanvas.width,
+          y: -10,
+          r: Math.random() * 6 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vy: Math.random() * 4 + 2,
+          vx: (Math.random() - 0.5) * 4,
+          spin: Math.random() * 0.2 - 0.1,
+          angle: Math.random() * Math.PI * 2,
+          alpha: 1,
+        });
+      }
+      if (!confettiAnim) animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confettiParticles.forEach(p => {
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
+        ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r);
+        ctx.restore();
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.08;
+        p.angle += p.spin;
+        if (p.y > confettiCanvas.height * 0.7) p.alpha -= 0.03;
+      });
+      confettiParticles = confettiParticles.filter(p => p.alpha > 0);
+      if (confettiParticles.length) {
+        confettiAnim = requestAnimationFrame(animateConfetti);
+      } else {
+        confettiAnim = null;
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      }
+    }
+  </script>
+</body>
+</html>
