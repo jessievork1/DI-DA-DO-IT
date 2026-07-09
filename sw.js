@@ -1,4 +1,4 @@
-const CACHE = 'didadoit-v4';
+const CACHE = 'didadoit-v5';
 const ASSETS = [
   './index.html',
   './logo.svg',

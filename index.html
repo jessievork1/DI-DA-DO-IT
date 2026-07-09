@@ -249,6 +249,24 @@
       100% { background-position: 300%; }
     }
 
+    /* ── Install button ── */
+    #btn-install {
+      display: none;
+      width: 100%;
+      margin-top: 12px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 18px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 1px;
+      transition: background 0.2s, color 0.2s;
+    }
+    #btn-install:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
     /* ── Home screen ── */
     .home-section {
       width: 100%;
@@ -904,6 +922,7 @@
       </div>
 
       <button class="btn-start" onclick="startGame()">▶ Start Game</button>
+      <button id="btn-install" onclick="installApp()">📲 Install as App</button>
     </div>
 
     <!-- ── GAME SCREEN ── -->
@@ -1427,6 +1446,29 @@
   </script>
 
   <script>
+    // ── PWA Install prompt ──
+    let deferredInstallPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      document.getElementById('btn-install').style.display = 'block';
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      document.getElementById('btn-install').style.display = 'none';
+    });
+
+    function installApp() {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.then(() => {
+        deferredInstallPrompt = null;
+        document.getElementById('btn-install').style.display = 'none';
+      });
+    }
+
     // Show splash ONLY when running as installed PWA (not in browser)
     const isPWA = window.matchMedia('(display-mode: standalone)').matches
                || window.navigator.standalone === true;

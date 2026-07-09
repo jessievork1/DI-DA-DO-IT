@@ -1,10 +1,8 @@
 {
-  "id": "/DI-DA-DO-IT/",
   "name": "Di Da Do It!",
   "short_name": "Di Da Do It",
   "description": "The humming game",
-  "start_url": "/DI-DA-DO-IT/",
-  "scope": "/DI-DA-DO-IT/",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#08000f",
