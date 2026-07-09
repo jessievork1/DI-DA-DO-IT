@@ -1,4 +1,4 @@
-const CACHE = 'didadoit-v1';
+const CACHE = 'didadoit-v2';
 const ASSETS = [
   './',
   './index.html',
