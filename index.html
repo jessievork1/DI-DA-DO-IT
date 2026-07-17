@@ -1093,7 +1093,7 @@
       { song: "Hey Jude", artist: "The Beatles", type: "DO" },
     ];
 
-    const TEAM1 = [
+    const SONGS = [
       { song: "Bohemian Rhapsody", artist: "Queen", type: "DI" },
       { song: "Shape of You", artist: "Ed Sheeran", type: "DA" },
       { song: "Blinding Lights", artist: "The Weeknd", type: "DO" },
@@ -1118,9 +1118,6 @@
       { song: "Europapa", artist: "Joost Klein", type: "DA" },
       { song: "See you Again", artist: "Charlie Puth", type: "DI" },
       { song: "Zij gelooft in mij", artist: "Andre Hazes", type: "DO" },
-    ];
-
-    const TEAM2 = [
       { song: "Billie Jean", artist: "Michael Jackson", type: "DI" },
       { song: "Bad Guy", artist: "Billie Eilish", type: "DA" },
       { song: "Happy", artist: "Pharrell Williams", type: "DO" },
@@ -1145,6 +1142,50 @@
       { song: "Kleine Jongen", artist: "Andre Hazes", type: "DA" },
       { song: "Levels", artist: "Avicii", type: "DI" },
       { song: "Pompeii", artist: "Bastille", type: "DI" },
+      // new-songs-1.txt
+      { song: "Mr. Brightside", artist: "The Killers", type: "DO" },
+      { song: "Wonderwall", artist: "Oasis", type: "DI" },
+      { song: "Angels", artist: "Robbie Williams", type: "DA" },
+      { song: "Livin' On A Prayer", artist: "Bon Jovi", type: "DO" },
+      { song: "Summer Of '69", artist: "Bryan Adams", type: "DI" },
+      { song: "September", artist: "Earth, Wind & Fire", type: "DO" },
+      { song: "Don't Stop Me Now", artist: "Queen", type: "DA" },
+      { song: "Africa", artist: "Toto", type: "DO" },
+      { song: "Sweet Child O' Mine", artist: "Guns N' Roses", type: "DI" },
+      { song: "YMCA", artist: "Village People", type: "DO" },
+      { song: "Wake Me Up", artist: "Avicii", type: "DO" },
+      { song: "Viva La Vida", artist: "Coldplay", type: "DI" },
+      { song: "Blauw", artist: "The Scene", type: "DA" },
+      { song: "Het Is Een Nacht", artist: "Guus Meeuwis", type: "DO" },
+      { song: "Rood", artist: "Marco Borsato", type: "DI" },
+      { song: "Bloed, Zweet en Tranen", artist: "André Hazes", type: "DO" },
+      { song: "Zoutelande", artist: "BLØF ft. Geike", type: "DA" },
+      { song: "Noodgeval", artist: "Goldband", type: "DO" },
+      { song: "Goud", artist: "Suzan & Freek", type: "DI" },
+      { song: "Hyperventilatie", artist: "Antoon", type: "DO" },
+      { song: "Terug In De Tijd", artist: "Yves Berendse", type: "DA" },
+      { song: "Links Rechts", artist: "Snollebollekes", type: "DO" },
+      { song: "Viva Hollandia", artist: "Wolter Kroes", type: "DI" },
+      { song: "Jij Bent Zo", artist: "Jeroen van der Boom", type: "DO" },
+      { song: "Amsterdam", artist: "FLEMMING", type: "DI" },
+      { song: "Don't Stop Believin'", artist: "Journey", type: "DO" },
+      { song: "I Want It That Way", artist: "Backstreet Boys", type: "DA" },
+      { song: "Wannabe", artist: "Spice Girls", type: "DO" },
+      { song: "Bad Romance", artist: "Lady Gaga", type: "DI" },
+      { song: "I Wanna Dance With Somebody", artist: "Whitney Houston", type: "DO" },
+      { song: "Counting Stars", artist: "OneRepublic", type: "DA" },
+      { song: "Flowers", artist: "Miley Cyrus", type: "DI" },
+      { song: "Lose Control", artist: "Teddy Swims", type: "DA" },
+      { song: "Take Me Home, Country Roads", artist: "John Denver", type: "DI" },
+      { song: "Sex On Fire", artist: "Kings Of Leon", type: "DO" },
+      { song: "Sinds 1 Dag Of 2 (32 Jaar)", artist: "Doe Maar", type: "DO" },
+      { song: "Het Regent Zonnestralen", artist: "Acda en De Munnik", type: "DO" },
+      { song: "Leef", artist: "André Hazes Jr.", type: "DA" },
+      { song: "Engelbewaarder", artist: "Marco Schuitmaker", type: "DO" },
+      { song: "Ik Huil Alleen Bij Jou", artist: "Ali B & Diggy Dex", type: "DO" },
+      { song: "Mag Ik Dan Bij Jou", artist: "Claudia de Breij", type: "DI" },
+      { song: "Dragostea Din Tei", artist: "O-Zone", type: "DI" },
+      { song: "Thunderstruck", artist: "AC/DC", type: "DO" },
     ];
 
     // ─────────────────────────────────────────────
@@ -1314,7 +1355,7 @@
     }
 
     function startGame() {
-      const list = currentTeam === 0 ? EXAMPLE : currentTeam === 1 ? TEAM1 : TEAM2;
+      const list = currentTeam === 0 ? EXAMPLE : SONGS;
       if (!list.length) { alert('No songs yet!'); return; }
 
       // Init audio on first user gesture
