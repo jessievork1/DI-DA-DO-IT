@@ -804,22 +804,6 @@
       flex-shrink: 0;
     }
 
-    /* ── Side puppets — desktop only ── */
-    .puppet {
-      position: fixed;
-      bottom: 0;
-      pointer-events: none;
-      z-index: 2;
-      width: 200px;
-      height: auto;
-      display: none;
-    }
-    @media (min-width: 940px) {
-      .puppet { display: block; }
-    }
-    .puppet-left  { right: calc(50% + 220px); }
-    .puppet-right { left:  calc(50% + 220px); transform: scaleX(-1); }
-
     /* ── Countdown overlay ── */
     #countdown-overlay {
       display: none;
@@ -850,9 +834,6 @@
   </style>
 </head>
 <body>
-
-  <img class="puppet puppet-left"  src="image.png" alt="" aria-hidden="true" />
-  <img class="puppet puppet-right" src="image.png" alt="" aria-hidden="true" />
 
   <div class="bg">
     <div class="orb orb1"></div>
